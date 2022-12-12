@@ -1,5 +1,5 @@
 /* Data Request to API */
-token = "BQB0KEMOFV2CoLrCIJ8x36tCxswOwOn0fvg1ihxCtbjidabpBmFW8Q-X26znTDyJ6R34ab7Lla4rHpM0FqiVUHtvuJbGYUUoOcmPFoCtQq9gkB9nsC--lNvaohtnmUXjP0r4bYnBJUy1CgD-C0ky8lPXaOkAOJ7RN79wYqAZrEcqApXdq79ARueyGCHwUrjyifYJ8AiO4p1x3WQ_ClKvLS5Tm3YbWwX90sAGxjRiuTFA-5WO5AhNzw"
+token = "BQDzKTn6C_4akp--tBxe6qfUuSNc5KsF8dejavBBb8cw79G-YUPRuoUH-k3WnafSbmvmCzdwblC6P2L9mSL_8lJ4n9cJYICiJ9Y5lAoC6z03eCJVza3kB0vv4WtOm52k6er39k-BKK-lfN4tPo8K__osjfsHNMsfBZTNQGF07syzkAEhP8dgc00LC62WPOMzDCYz4gC7B37sDj9ZHT5cOFI60PKmGnz2Gq14K7OGHQBX9N30bsjn"
 term = "long_term";
 artist_ids = "39cDMNnxwjrKJE1dyt47jh,1aBDI4nH6OfAkNyUX08O2V";
 album_id = "0TnOYISbd1XYRBk9myaseg";
@@ -35,26 +35,9 @@ function injectHTML(list) {
 
   const listEl = document.createElement('ol');
   target.appendChild(listEl);
-  console.log(list)
   list.forEach((item) => {
-    console.log('CCCCCCCCCCCCCCCCCCCCCCCCC')
     const el = document.createElement('li');
     el.innerText = item.name;
-    listEl.appendChild(el);
-  });
-}
-function injectHTMLV2(list) {
-  console.log(list)
-  console.log('fired injectHTML');
-  const target = document.querySelector('#data2');
-  target.innerHTML = '';
-
-  const listEl = document.createElement('ol');
-  target.appendChild(listEl);
-  console.log(list)
-  list.forEach((item) => {
-    const el = document.createElement('li');
-    el.innerText = item;
     listEl.appendChild(el);
   });
 }
@@ -69,6 +52,14 @@ function processAlbums(list) {
   return newArray;
 }
 
+function filterList(array, filterInputValue) {
+  return array.filter((item) => {
+    if (!item.name) { return; }
+    const lowerCaseName = item.name.toLowerCase();
+    const lowerCaseQuery = filterInputValue.toLowerCase();
+    return lowerCaseName.includes(lowerCaseQuery);
+  });
+}
 
 
 
@@ -85,19 +76,13 @@ const data_format = (track, location) => {
 };
 
 
-function filterList(array, filterInputValue,data) {
-  ret = { name_result:[],track_results:[]}
-
-  array.forEach((item,index) => {
+function filterList(array, filterInputValue) {
+  return array.filter((item) => {
     if (!item.name) { return; }
     const lowerCaseName = item.name.toLowerCase();
     const lowerCaseQuery = filterInputValue.toLowerCase();
-    if(lowerCaseName.includes(lowerCaseQuery)){
-      ret.name_result.push(data.name_result[index])
-      ret.track_results.push(data.track_results[index])
-    }
+    return lowerCaseName.includes(lowerCaseQuery);
   });
-  return ret
 }
 
 const initChart = (chart,chartData) => {
@@ -227,23 +212,25 @@ async function mainEvent() {
 currentList = []
 mainFilterform.addEventListener('input',(event)=>{
   console.log(event.target.value)
-  const filteredList = filterList(currentList, event.target.value,total_result);
-
-  removeData(mychart)
-  if (filteredList.name_result.length === 0){
-    if(track_results.name_result === 0){
-      injectHTMLV2([{name_result:'No Results :('}]);
-      removeData(mychart)
-    }else{
-
-      injectHTMLV2(track_results.name_result);
-    }
-    addData(mychart, track_results.name_result, track_results.track_results)
-  }else{
-    injectHTMLV2(filteredList.name_result);
-    addData(mychart, filteredList.name_result, filteredList.track_results)
-  }
+  const filteredList = filterList(currentList, event.target.value);
   
+
+  const variable_names = []
+  const track_numbers = []
+  total_result.name_result.forEach((item, index) => {
+    if (event.target.value.toLowerCase()===(item.toLowerCase())){
+      variable_names.push(item)
+      track_numbers.push(total_result.track_results[index])
+      console.log(variable_names)
+      console.log(track_numbers)
+    }
+  })
+    
+
+
+  injectHTML(filteredList);
+  addData(mychart, variable_names, track_numbers)
+  removeData(mychart)
     });
 
 mainFilterform.addEventListener('submit', (submitEvent) => {
