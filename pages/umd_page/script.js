@@ -1,5 +1,6 @@
 /* Data Request to API */
-token = "BQDzKTn6C_4akp--tBxe6qfUuSNc5KsF8dejavBBb8cw79G-YUPRuoUH-k3WnafSbmvmCzdwblC6P2L9mSL_8lJ4n9cJYICiJ9Y5lAoC6z03eCJVza3kB0vv4WtOm52k6er39k-BKK-lfN4tPo8K__osjfsHNMsfBZTNQGF07syzkAEhP8dgc00LC62WPOMzDCYz4gC7B37sDj9ZHT5cOFI60PKmGnz2Gq14K7OGHQBX9N30bsjn"
+let params = new URL(document.location).searchParams;
+let token = params.get("token");
 term = "long_term";
 artist_ids = "39cDMNnxwjrKJE1dyt47jh,1aBDI4nH6OfAkNyUX08O2V";
 album_id = "0TnOYISbd1XYRBk9myaseg";
